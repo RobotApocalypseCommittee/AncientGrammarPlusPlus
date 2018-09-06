@@ -65,6 +65,6 @@ elif platform.system() == "Linux":
 setup(name="AncientGrammar",
       ext_modules=[
           Extension("AncientGrammar",
-                    ["../src/verb.cpp", "wrapper.cpp", "../src/utf8proc/utf8proc.c"],
+                    ["../src/verb.cpp", "../src/utils.cpp", "wrapper.cpp", "../src/utf8proc/utf8proc.c"],
                     libraries=[library_name], define_macros=macros)
       ])

@@ -73,9 +73,8 @@ namespace ancientgrammar {
             //virtual std::string getInfinitive(Tense tense, Voice voice, bool autocontract) = 0;
             // virtual Adjective getParticiple(Tense tense, Voice voice) = 0; TODO Make adjective a thing
 
-            static std::string calculateAugment(std::string stem, bool uncommonEpsilon, std::string* preposition);
+            static std::string calculateAugment(std::string stem, bool uncommonEpsilon, const std::string* preposition);
             static std::string calculateBreathing(std::string stem, std::string augment, size_t length, bool has_prepostion);
-            static std::string calculateUnicode(std::string in, std::string mode);
         };
 
         // A namespace for a variety of helper functions not meant to really be used

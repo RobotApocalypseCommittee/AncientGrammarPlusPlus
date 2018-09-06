@@ -9,9 +9,15 @@
 
 namespace ancientgrammar {
     namespace utils {
-        std::string calculateUnicode(const std::string &in, const std::string &mode);
+        std::string calculateUnicodeNormalization(const std::string &in, const std::string &mode);
 
+        bool isVowel(std::string character);
 
+        std::string removeAccents(const std::string &in, bool oneCharOnly = false);
+
+        bool isEqual(const std::string &s1, const std::string &s2);
+
+        std::string basicChar(std::string in);
     }
 }
 

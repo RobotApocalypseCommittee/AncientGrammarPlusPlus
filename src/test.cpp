@@ -23,9 +23,9 @@ int main() {
     auto stem = std::string(u8"ἀγγελλω");
     auto augment = std::string(u8"η");
 
-    if (ancientgrammar::utils::calculateUnicode(stem, "NFD").find(u8"\u0313") != std::string::npos) {
+    if (ancientgrammar::utils::calculateUnicodeNormalization(stem, "NFD").find(u8"\u0313") != std::string::npos) {
         std::cout << "Found" << std::endl;
-        std::cout << ancientgrammar::utils::calculateUnicode(stem, "NFC") << std::endl;
+        std::cout << ancientgrammar::utils::calculateUnicodeNormalization(stem, "NFC") << std::endl;
     }
 
     std::cout << ancientgrammar::verbs::Verb::calculateBreathing(stem, augment, 3, false) << std::endl;
@@ -33,7 +33,7 @@ int main() {
     size_t offset = 0;
     while (true) {
         utf8proc_int32_t codepoint;
-        utf8proc_iterate(((const utf8proc_uint8_t*) u8"ἀγγελλω")+offset, -1, &codepoint);
+        utf8proc_iterate(((const utf8proc_uint8_t*) u8"ἀγγελλω") + offset, -1, &codepoint);
 
         if (codepoint == 0) {
             break;
