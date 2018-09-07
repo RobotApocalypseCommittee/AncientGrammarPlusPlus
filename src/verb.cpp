@@ -1,100 +1,82 @@
+#include <iostream>
+#include <cstring>
+
 #include "../include/verb.h"
 #include "../include/utils.h"
 #include "../include/utf8proc.h"
-
-#include <iostream>
-#include <cstring>
 
 namespace ancientgrammar {
     namespace verbs {
 
         const std::vector<std::string> Verb::kAugmentOrder = {
-                u8"ᾳ", u8"αι", u8"ει", u8"αυ", u8"8ευ", u8"α", u8"ι", u8"ο", u8"οι", u8"υ", u8"η", u8"ω"
+                "ᾳ", "αι", "ει", "αυ", "ευ", "α", "ι", "οι", "ο", "υ", "η", "ω"
         };
         const std::map<std::string, std::string> Verb::kAugmentMap = {
-                {u8"ᾳ", u8"η\u0345"},
-                {u8"αι", u8"η\u0345"},
-                {u8"ει", u8"η\u0345"},
-                {u8"αυ", u8"ηυ"},
-                {u8"ευ", u8"ηυ"},
-                {u8"α", u8"η"},
-                {u8"ι", u8"ι"},
-                {u8"ο", u8"ω"},
-                {u8"οι", u8"ω\u0345"},
-                {u8"υ", u8"υ"},
-                {u8"η", u8"η"},
-                {u8"ω", u8"ω"}
+                {"ᾳ",  "ῃ"},
+                {"αι", "ῃ"},
+                {"ει", "ῃ"},
+                {"αυ", "ηυ"},
+                {"ευ", "ηυ"},
+                {"α",  "η"},
+                {"ι",  "ι"},
+                {"οι", "ῳ"},
+                {"ο",  "ω"},
+                {"υ",  "υ"},
+                {"η",  "η"},
+                {"ω",  "ω"}
         };
 
         Verb::Verb() : mAllowedForms(kAllFormsAllowed) {};
+
         Verb::~Verb() = default;
 
-        std::string Verb::calculateAugment(const std::string stem, const bool uncommonEpsilon, const std::string* preposition) {
-            std::string stemCopy = stem;
+        std::string
+        Verb::calculateAugment(const std::string &stem, const bool uncommonEpsilon, const std::string *preposition) {
+            std::string stemCopy = utils::calculateUnicodeNormalization(stem, "NFC");
             std::string noAccentStemCopy = utils::removeAccents(stemCopy);
 
             bool hasPreposition = preposition != nullptr;
             std::string toPrepend;
             if (hasPreposition) {
-                if (!(utils::isEqual(*preposition, u8"προ") || utils::isEqual(*preposition, u8"περι")) &&
-                      utils::isVowel(std::string(1, preposition->back()))) {
-                    toPrepend = preposition->substr(0, preposition->length()-1);
+                if (!(utils::isEqual(*preposition, "προ") || utils::isEqual(*preposition, "περι")) &&
+                    utils::isVowel(utils::utf8Substr(*preposition,
+                                                     (int) utils::utf8CharacterVector(*preposition).size() - 1))) {
+                    toPrepend = utils::utf8Substr(*preposition, 0, utils::utf8CharacterVector(*preposition).size() - 1);
                 } else {
                     toPrepend = *preposition;
                 }
 
-                stemCopy = stemCopy.substr(preposition->length());
+                int start = (int) utils::utf8CharacterVector(*preposition).size();
+                stemCopy = utils::utf8Substr(stemCopy, start);
+                //stemCopy = stemCopy.substr(preposition->length());
             }
 
-            if (!ancientgrammar::utils::isVowel(std::string(1, preposition->front()))) {
+            if (!utils::isVowel(utils::utf8Substr(stemCopy, 0, 1))) {
                 if (hasPreposition) {
-                    return toPrepend + u8"ε" + stemCopy;
+                    return toPrepend + "ε" + stemCopy;
                 } else {
-                    return ancientgrammar::utils::calculateUnicodeNormalization(u8"ε\u0313", "NFC") + stemCopy;
+                    return "ἐ" + stemCopy;
                 }
             }
 
             bool toReturnSet = false;
             std::string toReturn;
-            for (const std::string& start : kAugmentOrder) {
+            for (const std::string &start : kAugmentOrder) {
                 if (noAccentStemCopy.compare(0, start.size(), start) == 0) {
-                    std::string decomposedString = utils::calculateUnicodeNormalization(start, "NFD");
-                    auto pDecomposedString = (const utf8proc_uint8_t*) decomposedString.c_str();
-
-                    // Because of niceness, offset is also the length in bytes
-                    size_t offset = 0;
-                    while (true) {
-                        utf8proc_int32_t codepoint;
-                        utf8proc_iterate(pDecomposedString + offset, -1, &codepoint);
-
-                        //Null, end of string TODO better way (get length of whole string)
-                        if (codepoint == 0) {
-                            break;
-                        }
-
-                        utf8proc_uint8_t character;
-                        auto charSize = (size_t) utf8proc_encode_char(codepoint, &character);
-
-                        offset += charSize;
-                    }
-
-                    toReturn = calculateBreathing(decomposedString, kAugmentMap.at(start), offset, hasPreposition);
+                    toReturn = calculateBreathing(stemCopy, kAugmentMap.at(start),
+                                                  (int) utils::utf8CharacterVector(start).size(),
+                                                  hasPreposition);
                     toReturnSet = true;
 
                     break;
                 }
             }
 
-            if (noAccentStemCopy.front() == *u8"ε" && !toReturnSet) {
-                utf8proc_int32_t codepoint;
-                utf8proc_iterate((const utf8proc_uint8_t*)u8"ε", -1, &codepoint);
-                utf8proc_uint8_t character;
-                auto charSize = (size_t) utf8proc_encode_char(codepoint, &character);
-
+            if (utils::isEqual(utils::utf8Substr(noAccentStemCopy, 0, 1), "ε") && !toReturnSet) {
                 if (uncommonEpsilon) {
-                    toReturn = calculateBreathing(stemCopy, u8"ει", charSize, hasPreposition);
+                    toReturn = calculateBreathing(stemCopy, "ει", 1, hasPreposition);
                 } else {
-                    toReturn = calculateBreathing(stemCopy, u8"η", charSize, hasPreposition);
+                    toReturn = calculateBreathing(stemCopy, "η", 1, hasPreposition);
                 }
             }
 
@@ -105,17 +87,22 @@ namespace ancientgrammar {
             }
         }
 
-        std::string Verb::calculateBreathing(std::string stem, std::string augment, size_t length, bool hasPreposition) {
+        std::string
+        Verb::calculateBreathing(std::string stem, std::string augment, int length, bool hasPreposition) {
             if (hasPreposition) {
-                return augment + stem.substr(length);
+                return augment + utils::utf8Substr(stem, length);
             }
 
-            if (ancientgrammar::utils::calculateUnicodeNormalization(stem, "NFD").find(u8"\u0313") != std::string::npos) {
+            if (ancientgrammar::utils::calculateUnicodeNormalization(stem, "NFD").find("̓") !=
+                std::string::npos) {
                 // Smooth breathing found
-                return ancientgrammar::utils::calculateUnicodeNormalization(augment + u8"\u0313" + stem.substr(length), "NFC");
-            } else if (ancientgrammar::utils::calculateUnicodeNormalization(stem, "NFD").find(u8"\u0314") != std::string::npos) {
+                return ancientgrammar::utils::calculateUnicodeNormalization(
+                        augment + "̓" + utils::utf8Substr(stem, length), "NFC");
+            } else if (ancientgrammar::utils::calculateUnicodeNormalization(stem, "NFD").find("̔") !=
+                       std::string::npos) {
                 // Rough breathing found
-                return ancientgrammar::utils::calculateUnicodeNormalization(augment + u8"\u0314" + stem.substr(length), "NFC");
+                return ancientgrammar::utils::calculateUnicodeNormalization(
+                        augment + "̔" + utils::utf8Substr(stem, length), "NFC");
             } else {
                 // TODO actually throw error
                 return "Oh no";

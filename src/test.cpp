@@ -9,6 +9,8 @@
 #include "../include/verb.h"
 #include "../include/utils.h"
 #include "../include/utf8proc.h"
+#include "../include/json.h"
+
 #include <iostream>
 #include <cstring>
 
@@ -20,16 +22,17 @@ int main() {
     //std::cout << "Test: " << ancientgrammar::verbs::Verb::calculateBreathing(std::string(u8"ἀγγελλω"), std::string(u8"η"), 1, false) << std::endl;
     //std::cout << "Test: " << utf8proc_NFD(reinterpret_cast<const utf8proc_uint8_t*>(std::string(u8"ἀγγελλω").c_str())) << std::endl;
 
-    auto stem = std::string(u8"ἀγγελλω");
-    auto augment = std::string(u8"η");
+    auto stem = std::string("ἀγγελλω");
+    auto augment = std::string("η");
 
-    if (ancientgrammar::utils::calculateUnicodeNormalization(stem, "NFD").find(u8"\u0313") != std::string::npos) {
-        std::cout << "Found" << std::endl;
-        std::cout << ancientgrammar::utils::calculateUnicodeNormalization(stem, "NFC") << std::endl;
+    if (ancientgrammar::utils::calculateUnicodeNormalization(stem, "NFD").find("̓") != std::string::npos) {
+        //std::cout << "Found" << std::endl;
+        //std::cout << ancientgrammar::utils::calculateUnicodeNormalization(stem, "NFC") << std::endl;
     }
 
-    std::cout << ancientgrammar::verbs::Verb::calculateBreathing(stem, augment, 3, false) << std::endl;
+    //std::cout << ancientgrammar::verbs::Verb::calculateBreathing(stem, augment, 3, false) << std::endl;
 
+    /*
     size_t offset = 0;
     while (true) {
         utf8proc_int32_t codepoint;
@@ -47,7 +50,12 @@ int main() {
         std::cout << strlen(realChar.c_str()) << std::endl;
 
         offset += charSize;
-    }
+    }*/
+
+    std::string prep("παρα");
+    std::cout << ancientgrammar::verbs::Verb::calculateAugment("παρασκευάζω", false, &prep) << std::endl;
+    
+    std::cout << ancientgrammar::verbs::detail::kVerbTable << std::endl;
 
     return 0;
 }
