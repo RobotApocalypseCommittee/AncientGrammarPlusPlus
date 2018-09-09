@@ -10,7 +10,7 @@
 namespace ancientgrammar {
     namespace utils {
         std::string calculateUnicodeNormalization(const std::string &in, const std::string &mode) {
-            auto pString = reinterpret_cast<const utf8proc_uint8_t*>(in.c_str());
+            auto pString = (const utf8proc_uint8_t*) in.c_str();
 
             utf8proc_uint8_t* pOutString;
             if (mode == "NFC") {
@@ -44,22 +44,16 @@ namespace ancientgrammar {
                     break;
                 }
 
-                const utf8proc_int32_t codepointCopy = codepoint;
-
-                utf8proc_uint8_t character = 0;
-                auto charSize = (size_t) utf8proc_encode_char(codepointCopy, &character);
-                std::string realChar = std::string((const char*) &character).substr(0, charSize);
-
-                // God knows why this is needed, but the above function call seems to somehow alter codepoint;
-                codepoint = codepointCopy;
+                utf8proc_uint8_t character[4];
+                auto charSize = (size_t) utf8proc_encode_char(codepoint, character);
 
                 offset += charSize;
 
-                if ((utf8proc_category(codepoint) == UTF8PROC_CATEGORY_MN) && ((codepoint != 0x0345) || !oneCharOnly)) {
+                if ((utf8proc_category(codepoint) == UTF8PROC_CATEGORY_MN) && ((codepoint != 0x0345) || oneCharOnly)) {
                     continue;
                 }
 
-                rebuiltString += realChar;
+                rebuiltString.append((const char*) character, charSize);
             }
 
             if (!oneCharOnly) {
@@ -92,12 +86,12 @@ namespace ancientgrammar {
                     break;
                 }
 
-                utf8proc_uint8_t character;
-                auto charSize = (size_t) utf8proc_encode_char(codepoint, &character);
+                utf8proc_uint8_t character[4];
+                auto charSize = (size_t) utf8proc_encode_char(codepoint, character);
 
                 offset += charSize;
 
-                std::string realChar = std::string((const char*) &character).substr(0, charSize);
+                std::string realChar = std::string((const char*) character, charSize);
                 characterVector.push_back(realChar);
             }
 

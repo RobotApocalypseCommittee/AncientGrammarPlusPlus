@@ -54,8 +54,10 @@ int main() {
 
     std::string prep("παρα");
     std::cout << ancientgrammar::verbs::Verb::calculateAugment("παρασκευάζω", false, &prep) << std::endl;
+
+    std::cout << ancientgrammar::utils::removeAccents("ᾤκεον", false) << std::endl;
     
-    std::cout << ancientgrammar::verbs::detail::kVerbTable << std::endl;
+    //std::cout << ancientgrammar::verbs::detail::kVerbTable << std::endl;
 
     return 0;
 }
