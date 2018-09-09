@@ -5,19 +5,19 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(SOURCE_FILES )
 list(APPEND SOURCE_FILES
-src/verb.cpp
-src/utf8proc/utf8proc.c
-src/utils.cpp)
+        src/verb.cpp
+        src/utf8proc/utf8proc.c
+        src/utils.cpp)
 
 set(PUBLIC_HEADER_FILES )
 list(APPEND PUBLIC_HEADER_FILES
-include/verb.h
-include/utils.h)
+        include/verb.h
+        include/utils.h
+        include/json.h)
 
 set(OTHER_HEADER_FILES )
 list(APPEND OTHER_HEADER_FILES
-include/utf8proc.h
-include/json.h)
+        include/utf8proc.h)
 
 add_library(AncientGrammar ${SOURCE_FILES} ${PUBLIC_HEADER_FILES} ${OTHER_HEADER_FILES})
 
