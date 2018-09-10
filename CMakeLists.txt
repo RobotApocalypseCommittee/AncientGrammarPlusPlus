@@ -30,24 +30,39 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Cl
 endif()
 
 
-if(IOS)
+if(IOS OR MACOS)
+    if(NOT DEFINED DEVELOPMENT_TEAM_ID)
+        set(DEVELOPMENT_TEAM_ID "PLACEHOLDER")
+    endif()
+
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fembed-bitcode")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fembed-bitcode")
 
-    set(CMAKE_OSX_SYSROOT iphoneos)
+
+    if(IOS)
+        set(CMAKE_OSX_SYSROOT iphoneos)
+        # seamless toggle between device and simulator - one is ARM, the other is intel
+        set(CMAKE_XCODE_EFFECTIVE_PLATFORMS "-iphoneos;-iphonesimulator")
+
+        set_target_properties(AncientGrammar PROPERTIES
+                XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer"
+                XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"
+                XCODE_ATTRIBUTE_DEVELOPMENT_TEAM ${DEVELOPMENT_TEAM_ID})
+    else()
+        set(CMAKE_OSX_SYSROOT macosx)
+
+        set_target_properties(AncientGrammar PROPERTIES
+                XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Mac Developer"
+                XCODE_ATTRIBUTE_DEVELOPMENT_TEAM ${DEVELOPMENT_TEAM_ID})
+    endif()
+
+    set_target_properties(AncientGrammar PROPERTIES
+            FRAMEWORK TRUE
+            MACOSX_FRAMEWORK_IDENTIFIER com.mrattoattoatto.AncientGrammarLib
+            PUBLIC_HEADER "${PUBLIC_HEADER_FILES}")
 
     # Chooses the correct arch
     set(CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD_64_BIT)")
-
-    # seamless toggle between device and simulator - one is ARM, the other is intel
-    set(CMAKE_XCODE_EFFECTIVE_PLATFORMS "-iphoneos;-iphonesimulator")
-
-    set_target_properties(AncientGrammar PROPERTIES
-    FRAMEWORK TRUE
-    MACOSX_FRAMEWORK_IDENTIFIER com.mrattoattoatto.AncientGrammarLib
-    PUBLIC_HEADER "${PUBLIC_HEADER_FILES}"
-    XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer"
-    XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2")
 endif()
 
 
