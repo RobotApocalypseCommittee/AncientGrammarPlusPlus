@@ -6,7 +6,8 @@
 #include <Windows.h>
 #endif
 
-#include "../include/verb.h"
+#include "../include/verbs/verb.h"
+#include "../include/verbs/regularverb.h"
 #include "../include/utils.h"
 #include "../include/utf8proc.h"
 #include "../include/json.h"
@@ -56,6 +57,8 @@ int main() {
     std::cout << ancientgrammar::verbs::Verb::calculateAugment("παρασκευάζω", false, &prep) << std::endl;
 
     std::cout << ancientgrammar::utils::removeAccents("ᾤκεον", false) << std::endl;
+
+    ancientgrammar::verbs::RegularVerb bang("λυω", "λυσω", "λυσα", "λυθην");
     
     //std::cout << ancientgrammar::verbs::detail::kVerbTable << std::endl;
 

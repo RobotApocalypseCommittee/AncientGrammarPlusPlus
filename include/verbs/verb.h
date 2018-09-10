@@ -5,7 +5,7 @@
 #include <string>
 #include <map>
 
-#include "json.h"
+#include "../json.h"
 
 namespace ancientgrammar {
     namespace verbs {
@@ -41,10 +41,12 @@ namespace ancientgrammar {
             PASSIVE
         };
 
+        typedef std::map<Tense, std::vector<Voice>> AllowedFormsMap;
+
         // Defines the constant values for allowed forms. If within the tense a voice is allowed, then that combo of
         // voice and tense are allowed
         const std::vector<Voice> kAllVoices = {Voice::ACTIVE, Voice::MIDDLE, Voice::PASSIVE};
-        const std::map<Tense, std::vector<Voice>> kAllFormsAllowed = {
+        const AllowedFormsMap kAllFormsAllowed = {
                 {Tense::PRESENT,   kAllVoices},
                 {Tense::AORIST,    kAllVoices},
                 {Tense::FUTURE,    kAllVoices},
@@ -59,25 +61,26 @@ namespace ancientgrammar {
 
         // Base class for verbs.
         class Verb {
-        private:
-            const std::map<Tense, std::vector<Voice>> mAllowedForms;
-
         protected:
             // Defines the order in which augments should be looked for to convert them
             static const std::vector<std::string> kAugmentOrder;
             // Defines the conversion between a string of characters and its augmented form
             static const std::map<std::string, std::string> kAugmentMap;
 
+            // Defines which forms are allowed with this specific verb
+            AllowedFormsMap mAllowedForms;
+
         public:
             // TODO undo commenting out of virtuals
-            Verb();
-
+            explicit Verb(const AllowedFormsMap &allowedForms=kAllFormsAllowed);
             ~Verb();
-            //virtual bool canGetForm(Tense tense, Voice voice) = 0;
-            //virtual std::string getFiniteForm(Tense tense, Mood mood, Voice voice, int person, bool isPlural, bool autocontract) = 0;
-            //virtual std::string getImperative(Tense aspect, Voice voice, bool isPlural, bool autocontract) = 0;
-            //virtual std::string getInfinitive(Tense tense, Voice voice, bool autocontract) = 0;
-            //virtual Adjective getParticiple(Tense tense, Voice voice) = 0; TODO Make adjective a thing
+
+            bool canGetForm(Tense tense, Voice voice) const;
+
+            //virtual std::string getFiniteForm(Tense tense, Mood mood, Voice voice, int person, bool isPlural, bool autocontract) const = 0;
+            //virtual std::string getImperative(Tense aspect, Voice voice, bool isPlural, bool autocontract) const = 0;
+            //virtual std::string getInfinitive(Tense tense, Voice voice, bool autocontract) const = 0;
+            //virtual Adjective getParticiple(Tense tense, Voice voice) const = 0; TODO Make adjective a thing
 
             // Calculates and applies the correct augment for a stem and returns the new stem.
             // Uncommon epsilon augment refers to the few (but not unique) verbs which,
@@ -89,7 +92,7 @@ namespace ancientgrammar {
                                                 const std::string *preposition);
 
             // Chooses and applies the correct breathing to use based on stem, augment, length of augment, and
-            static std::string calculateBreathing(std::string stem, std::string augment, int length,
+            static std::string calculateBreathing(std::string stem, std::string augment, unsigned long long int length,
                                                   bool hasPreposition);
         };
 

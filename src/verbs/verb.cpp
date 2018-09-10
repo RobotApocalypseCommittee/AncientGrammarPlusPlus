@@ -1,9 +1,11 @@
-#include <iostream>
-#include <cstring>
+#include <algorithm>
+#include <vector>
+#include <string>
+#include <map>
 
-#include "../include/verb.h"
-#include "../include/utils.h"
-#include "../include/utf8proc.h"
+#include "../../include/verbs/verb.h"
+#include "../../include/utils.h"
+#include "../../include/utf8proc.h"
 
 namespace ancientgrammar {
     namespace verbs {
@@ -26,7 +28,7 @@ namespace ancientgrammar {
                 {"ω",  "ω"}
         };
 
-        Verb::Verb() : mAllowedForms(kAllFormsAllowed) {};
+        Verb::Verb(const AllowedFormsMap &allowedForms) : mAllowedForms(allowedForms) {};
 
         Verb::~Verb() = default;
 
@@ -38,17 +40,16 @@ namespace ancientgrammar {
             bool hasPreposition = preposition != nullptr;
             std::string toPrepend;
             if (hasPreposition) {
+                utils::CharacterVector prepositionCharacterVector = utils::utf8CharacterVector(*preposition);
+                unsigned long long int prepositionLength = prepositionCharacterVector.size();
                 if (!(utils::isEqual(*preposition, "προ") || utils::isEqual(*preposition, "περι")) &&
-                    utils::isVowel(utils::utf8Substr(*preposition,
-                                                     (int) utils::utf8CharacterVector(*preposition).size() - 1))) {
-                    toPrepend = utils::utf8Substr(*preposition, 0, utils::utf8CharacterVector(*preposition).size() - 1);
+                        utils::isVowel(utils::characterVectorSubstr(prepositionCharacterVector, prepositionLength-1))) {
+
+                    toPrepend = utils::characterVectorSubstr(prepositionCharacterVector, 0, prepositionLength-1);
                 } else {
                     toPrepend = *preposition;
                 }
-
-                int start = (int) utils::utf8CharacterVector(*preposition).size();
-                stemCopy = utils::utf8Substr(stemCopy, start);
-                //stemCopy = stemCopy.substr(preposition->length());
+                stemCopy = utils::utf8Substr(stemCopy, utils::utf8Length(*preposition));
             }
 
             if (!utils::isVowel(utils::utf8Substr(stemCopy, 0, 1))) {
@@ -64,7 +65,7 @@ namespace ancientgrammar {
             for (const std::string &start : kAugmentOrder) {
                 if (noAccentStemCopy.compare(0, start.size(), start) == 0) {
                     toReturn = calculateBreathing(stemCopy, kAugmentMap.at(start),
-                                                  (int) utils::utf8CharacterVector(start).size(),
+                                                  utils::utf8CharacterVector(start).size(),
                                                   hasPreposition);
                     toReturnSet = true;
 
@@ -87,14 +88,13 @@ namespace ancientgrammar {
             }
         }
 
-        std::string
-        Verb::calculateBreathing(std::string stem, std::string augment, int length, bool hasPreposition) {
+        std::string Verb::calculateBreathing(std::string stem, std::string augment, unsigned long long int length,
+                bool hasPreposition) {
             if (hasPreposition) {
                 return augment + utils::utf8Substr(stem, length);
             }
 
-            if (ancientgrammar::utils::calculateUnicodeNormalization(stem, "NFD").find("̓") !=
-                std::string::npos) {
+            if (ancientgrammar::utils::calculateUnicodeNormalization(stem, "NFD").find("̓") != std::string::npos) {
                 // Smooth breathing found
                 return ancientgrammar::utils::calculateUnicodeNormalization(
                         augment + "̓" + utils::utf8Substr(stem, length), "NFC");
@@ -104,9 +104,14 @@ namespace ancientgrammar {
                 return ancientgrammar::utils::calculateUnicodeNormalization(
                         augment + "̔" + utils::utf8Substr(stem, length), "NFC");
             } else {
-                // TODO actually throw error
-                return "Oh no";
+                throw std::logic_error("VerbComputeError: Could not ascertain breathing!");
             }
+        }
+
+        bool Verb::canGetForm(const Tense tense, const Voice voice) const {
+            std::vector<Voice> voicesAllowedForTense = mAllowedForms.at(tense);
+            return std::find(voicesAllowedForTense.begin(), voicesAllowedForTense.end(),
+                    voice) != voicesAllowedForTense.end();
         }
 
 

@@ -12,6 +12,14 @@ namespace ancientgrammar {
     namespace utils {
         typedef long long int length_t;
 
+        typedef std::vector<std::string> CharacterVector;
+
+        enum class ContractType {
+            ALPHA,
+            EPSILON,
+            NONE
+        };
+
         std::string calculateUnicodeNormalization(const std::string &in, const std::string &mode);
 
         bool isVowel(std::string character);
@@ -22,11 +30,15 @@ namespace ancientgrammar {
 
         std::string basicChar(std::string in);
 
-        std::vector<std::string> utf8CharacterVector(const std::string &in);
+        CharacterVector utf8CharacterVector(const std::string &in);
 
-        std::string utf8Substr(const std::string &in, int start, length_t length);
+        std::string characterVectorSubstr(CharacterVector &in, unsigned long long int start, length_t length);
+        std::string characterVectorSubstr(CharacterVector &in, unsigned long long int start);
 
-        std::string utf8Substr(const std::string &in, int start);
+        std::string utf8Substr(const std::string &in, unsigned long long int start, length_t length);
+        std::string utf8Substr(const std::string &in, unsigned long long int start);
+
+        unsigned long long int utf8Length(const std::string &in);
     }
 }
 

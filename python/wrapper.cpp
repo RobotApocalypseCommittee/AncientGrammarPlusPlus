@@ -4,7 +4,7 @@
 
 #include <boost/python.hpp>
 
-#include "../include/verb.h"
+#include "../include/verbs/verb.h"
 #include "../include/utils.h"
 #include "../include/json.h"
 

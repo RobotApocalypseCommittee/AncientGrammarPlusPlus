@@ -5,13 +5,15 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(SOURCE_FILES )
 list(APPEND SOURCE_FILES
-        src/verb.cpp
+        src/verbs/verb.cpp
+        src/verbs/regularverb.cpp
         src/utf8proc/utf8proc.c
         src/utils.cpp)
 
 set(PUBLIC_HEADER_FILES )
 list(APPEND PUBLIC_HEADER_FILES
-        include/verb.h
+        include/verbs/verb.h
+        include/verbs/regularverb.h
         include/utils.h
         include/json.h)
 

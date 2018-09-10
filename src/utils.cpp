@@ -71,11 +71,11 @@ namespace ancientgrammar {
             return removeAccents(in, true);
         }
 
-        std::vector<std::string> utf8CharacterVector(const std::string &in) {
+        CharacterVector utf8CharacterVector(const std::string &in) {
             std::string combinedString = calculateUnicodeNormalization(in, "NFC");
             auto pCombinedString = (const utf8proc_uint8_t*) combinedString.c_str();
 
-            std::vector<std::string> characterVector;
+            CharacterVector characterVector;
             size_t offset = 0;
             while (true) {
                 utf8proc_int32_t codepoint;
@@ -98,24 +98,36 @@ namespace ancientgrammar {
             return characterVector;
         }
 
-        std::string utf8Substr(const std::string &in, int start, length_t length) {
-            std::vector<std::string> characterVector = utf8CharacterVector(in);
+        std::string characterVectorSubstr(CharacterVector &in, unsigned long long int start, length_t length) {
             std::string reconstructedString;
             if (length >= 0) {
-                for (int i = start; i < start + length; i++) {
-                    reconstructedString += characterVector[i];
+                for (unsigned long long int i = start; i < start + length; i++) {
+                    reconstructedString += in[(size_t) i];
                 }
             } else {
-                for (int i = start; i < characterVector.size(); i++) {
-                    reconstructedString += characterVector[i];
+                for (unsigned long long int i = start; i < in.size(); i++) {
+                    reconstructedString += in[(size_t) i];
                 }
             }
 
             return reconstructedString;
         }
 
-        std::string utf8Substr(const std::string &in, int start) {
+        std::string characterVectorSubstr(CharacterVector &in, unsigned long long int start) {
+            return characterVectorSubstr(in, start, -1);
+        }
+
+        std::string utf8Substr(const std::string &in, unsigned long long int start, length_t length) {
+            CharacterVector characterVector = utf8CharacterVector(in);
+            return characterVectorSubstr(characterVector, start, length);
+        }
+
+        std::string utf8Substr(const std::string &in, unsigned long long int start) {
             return utf8Substr(in, start, -1);
+        }
+
+        unsigned long long int utf8Length(const std::string &in) {
+            return utf8CharacterVector(in).size();
         }
     }
 }
