@@ -4,3 +4,4 @@ steps:
   - task: CMake@1
     inputs:
       workingDirectory: 'build'
+      cmakeArgs: ".."
