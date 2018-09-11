@@ -5,3 +5,7 @@ steps:
     inputs:
       workingDirectory: 'build'
       cmakeArgs: ".."
+  - task: CMake@2
+    inputs:
+      workingDirectory: 'build'
+      cmakeArgs: "--build .. --target all --"
