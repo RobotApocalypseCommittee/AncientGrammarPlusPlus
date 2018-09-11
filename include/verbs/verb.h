@@ -98,11 +98,11 @@ namespace ancientgrammar {
             ~Verb();
 
             virtual std::string getFiniteForm(Tense tense, Mood mood, Voice voice, int person, bool isPlural,
-                    bool autocontract=false) const = 0;
+                    bool autocontract=true) const = 0;
             virtual std::string getImperative(Tense aspect, Voice voice, bool isPlural,
-                    bool autocontract=false) const = 0;
+                    bool autocontract=true) const = 0;
             virtual std::string getInfinitive(Tense tense, Voice voice,
-                    bool autocontract=false) const = 0;
+                    bool autocontract=true) const = 0;
             //virtual Adjective getParticiple(Tense tense, Voice voice) const = 0; TODO Make adjective a thing
         };
 

@@ -48,36 +48,43 @@ namespace ancientgrammar {
         std::string calculateContraction(const std::string &stem, const std::string &ending, ContractType contractType, bool spuriousEi=false);
 
         namespace detail {
-            const nlohmann::json kContractionTable = nlohmann::json::parse("{\n"
-                                                                     "    \"ALPHA\":{\n"
-                                                                     "        \"αι\":\"αι\",\n"
-                                                                     "        \"ᾳ\":\"ᾳ\",\n"
-                                                                     "        \"α\":\"α\",\n"
-                                                                     "        \"ε\":\"α\",\n"
-                                                                     "        \"η\":\"α\",\n"
-                                                                     "        \"ῃ\":\"ᾳ\",\n"
-                                                                     "        \"ι\":\"αι\",\n"
-                                                                     "        \"οι\":\"ῳ\",\n"
-                                                                     "        \"ου\":\"ω\",\n"
-                                                                     "        \"ο\":\"ω\",\n"
-                                                                     "        \"ω\":\"ω\"\n"
-                                                                     "    },\n"
-                                                                     "    \"EPSILON\":{\n"
-                                                                     "        \"αι\":\"ῃ\",\n"
-                                                                     "        \"α\":\"η\",\n"
-                                                                     "        \"ει\":\"ει\",\n"
-                                                                     "        \"ε\":\"ει\",\n"
-                                                                     "        \"η\":\"η\",\n"
-                                                                     "        \"ῃ\":\"ῃ\",\n"
-                                                                     "        \"ι\":\"ει\",\n"
-                                                                     "        \"οι\":\"οι\",\n"
-                                                                     "        \"ου\":\"ου\",\n"
-                                                                     "        \"ο\":\"ου\",\n"
-                                                                     "        \"υ\":\"ευ\",\n"
-                                                                     "        \"ω\":\"ω\",\n"
-                                                                     "        \"ῳ\":\"ῳ\"\n"
-                                                                     "    }\n"
-                                                                     "}");
+            const std::vector<std::string> kAlphaContractOrder = {
+                    "αι", "ᾳ", "α", "ε", "η", "ῃ", "ι", "οι", "ου", "ο", "ω"
+            };
+
+            const std::vector<std::string> kEpsilonContractOrder = {
+                    "αι", "α", "ει", "ε", "η", "ῃ", "ι", "οι", "ου", "ο", "υ", "ω", "ῳ"
+            };
+
+            const std::map<std::string, std::string> kAlphaContractMap {
+                    {"αι", "αι"},
+                    {"ᾳ", "ᾳ"},
+                    {"α", "α"},
+                    {"ε", "α"},
+                    {"η", "α"},
+                    {"ῃ", "ᾳ"},
+                    {"ι", "αι"},
+                    {"οι", "ῳ"},
+                    {"ου", "ω"},
+                    {"ο", "ω"},
+                    {"ω", "ω"}
+            };
+
+            const std::map<std::string, std::string> kEpsilonContractMap {
+                    {"αι", "ῃ"},
+                    {"α", "η"},
+                    {"ει", "ει"},
+                    {"ε", "ει"},
+                    {"η", "η"},
+                    {"ῃ", "ῃ"},
+                    {"ι", "ει"},
+                    {"οι", "οι"},
+                    {"ου", "ου"},
+                    {"ο", "ου"},
+                    {"υ", "ευ"},
+                    {"ω", "ω"},
+                    {"ῳ", "ῳ"}
+            };
         }
     }
 }

@@ -133,7 +133,7 @@ namespace ancientgrammar {
                 ending = detail::kVerbTable["AORIST"][moodNames[(int)mood]][voiceNames[(int)voice]]
                             [aoristTypeNames[(int) aoristType]][std::to_string(person)][isPlural ? "True" : "False"]
                             .get<std::string>();
-            } else if (tense == Tense::PRESENT && mood == Mood::OPTATIVE && voice == Voice::ACTIVE && isPlural) {
+            } else if (tense == Tense::PRESENT && mood == Mood::OPTATIVE && voice == Voice::ACTIVE && !isPlural) {
                 // Handles the dodgy optative
                 ending = detail::kVerbTable["PRESENT"]["OPTATIVE"]["ACTIVE"][std::to_string(person)]["False"]
                             [mContract != utils::ContractType::NONE ? "True" : "False"].get<std::string>();

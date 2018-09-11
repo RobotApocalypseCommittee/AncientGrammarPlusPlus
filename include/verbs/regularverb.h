@@ -38,11 +38,11 @@ namespace ancientgrammar {
             ~RegularVerb();
 
             virtual std::string getFiniteForm(Tense tense, Mood mood, Voice voice, int person, bool isPlural,
-                                              bool autocontract=false) const override;
+                                              bool autocontract=true) const override;
 
-            virtual std::string getImperative(Tense aspect, Voice voice, bool isPlural, bool autocontract=false) const override;
+            virtual std::string getImperative(Tense aspect, Voice voice, bool isPlural, bool autocontract=true) const override;
 
-            virtual std::string getInfinitive(Tense tense, Voice voice, bool autocontract=false) const override;
+            virtual std::string getInfinitive(Tense tense, Voice voice, bool autocontract=true) const override;
         };
     }
 }

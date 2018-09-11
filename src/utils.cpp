@@ -3,6 +3,7 @@
 //
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "../include/json.h"
 #include "../include/utils.h"
@@ -151,19 +152,19 @@ namespace ancientgrammar {
                 }
 
 
-                for (const auto &iterator : detail::kContractionTable["ALPHA"].items()) {
-                    if (noAccentEnding.compare(0, iterator.key().size(), iterator.key()) == 0) {
+                for (const std::string &endingStart : detail::kAlphaContractOrder) {
+                    if (noAccentEnding.compare(0, endingStart.size(), endingStart) == 0) {
                         return characterVectorSubstr(stemCharacterVector, 0, stemLength-1) +
-                                iterator.value().get<std::string>() +
-                                characterVectorSubstr(endingCharacterVector, utf8Length(iterator.key())-1);
+                                detail::kAlphaContractMap.at(endingStart) +
+                                characterVectorSubstr(endingCharacterVector, utf8Length(endingStart));
                     }
                 }
             } else if (contractType == ContractType::EPSILON) {
-                for (const auto &iterator : detail::kContractionTable["EPSILON"].items()) {
-                    if (noAccentEnding.compare(0, iterator.key().size(), iterator.key()) == 0) {
+                for (const std::string &endingStart : detail::kEpsilonContractOrder) {
+                    if (noAccentEnding.compare(0, endingStart.size(), endingStart) == 0) {
                         return characterVectorSubstr(stemCharacterVector, 0, stemLength-1) +
-                                iterator.value().get<std::string>() +
-                                characterVectorSubstr(endingCharacterVector, utf8Length(iterator.key())-1);
+                               detail::kEpsilonContractMap.at(endingStart) +
+                               characterVectorSubstr(endingCharacterVector, utf8Length(endingStart));
                     }
                 }
             }

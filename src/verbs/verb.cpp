@@ -35,13 +35,12 @@ namespace ancientgrammar {
         std::string
         Verb::calculateAugment(const std::string &stem, const bool uncommonEpsilon, const std::string &preposition) {
             std::string stemCopy = utils::calculateUnicodeNormalization(stem, "NFC");
-            std::string noAccentStemCopy = utils::removeAccents(stemCopy);
 
             bool hasPreposition = !preposition.empty();
             std::string toPrepend;
             if (hasPreposition) {
                 utils::CharacterVector prepositionCharacterVector = utils::utf8CharacterVector(preposition);
-                unsigned long long int prepositionLength = prepositionCharacterVector.size();
+                 unsigned long long int prepositionLength = prepositionCharacterVector.size();
                 if (!(utils::isEqual(preposition, "προ") || utils::isEqual(preposition, "περι")) &&
                         utils::isVowel(utils::characterVectorSubstr(prepositionCharacterVector, prepositionLength-1))) {
 
@@ -59,6 +58,8 @@ namespace ancientgrammar {
                     return utils::calculateUnicodeNormalization("ἐ", "NFC") + stemCopy;
                 }
             }
+
+            std::string noAccentStemCopy = utils::removeAccents(stemCopy);
 
             bool toReturnSet = false;
             std::string toReturn;

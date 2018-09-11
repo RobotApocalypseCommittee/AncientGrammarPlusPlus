@@ -13,11 +13,14 @@ std::string getVT() {
     return ancientgrammar::verbs::detail::kVerbTable.dump(4);
 }
 
-BOOST_PYTHON_FUNCTION_OVERLOADS(regularVerbConstructorOverloads, RegularVerb::RegularVerb, 0, 7)
+using namespace ancientgrammar::verbs;
+
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(finiteOverloads, RegularVerb::getFiniteForm, 5, 6)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(imperativeOverloads, RegularVerb::getImperative, 3, 4)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(infinitiveOverloads, RegularVerb::getInfinitive, 2, 3)
 
 BOOST_PYTHON_MODULE(AncientGrammar) {
     using namespace boost::python;
-    using namespace ancientgrammar::verbs;
     using namespace ancientgrammar::utils;
     class_<RegularVerb>("RegularVerb")
             .def(init<std::string>())
@@ -27,7 +30,9 @@ BOOST_PYTHON_MODULE(AncientGrammar) {
             .def(init<std::string, std::string, std::string, std::string, std::string>())
             .def(init<std::string, std::string, std::string, std::string, std::string, bool>())
             //.def(init<std::string, std::string, std::string, std::string, std::string, bool, AllowedFormsMap>())
-            .def("get_finite_form", &RegularVerb::getFiniteForm);
+            .def("get_finite_form", &RegularVerb::getFiniteForm, finiteOverloads())
+            .def("get_imperative", &RegularVerb::getImperative, imperativeOverloads())
+            .def("get_infinitive", &RegularVerb::getInfinitive, infinitiveOverloads());
 
     enum_<Tense>("Tense")
         .value("FUTURE", Tense::FUTURE)

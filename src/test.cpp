@@ -57,10 +57,10 @@ int main() {
 
     std::cout << ancientgrammar::utils::removeAccents("ᾤκεον", false) << std::endl;
 
-    ancientgrammar::verbs::RegularVerb bang("λυω", "λυσω", "λυσα", "λυθην");
+    ancientgrammar::verbs::RegularVerb bang("τιμαω");
 
-    std::cout << bang.getFiniteForm(ancientgrammar::verbs::Tense::AORIST, ancientgrammar::verbs::Mood::OPTATIVE,
-            ancientgrammar::verbs::Voice::PASSIVE, 2, true) << std::endl;
+    std::cout << bang.getFiniteForm(ancientgrammar::verbs::Tense::PRESENT, ancientgrammar::verbs::Mood::OPTATIVE,
+            ancientgrammar::verbs::Voice::ACTIVE, 2, false) << std::endl;
     
     //std::cout << ancientgrammar::verbs::detail::kVerbTable << std::endl;
 
