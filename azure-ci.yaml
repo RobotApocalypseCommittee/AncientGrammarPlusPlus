@@ -5,6 +5,7 @@ steps:
   inputs:
     workingDirectory: 'build'
     cmakeArgs: ".."
+-bash: "cd build; ls;"
 - task: CMake@1
   inputs:
     workingDirectory: 'build'
