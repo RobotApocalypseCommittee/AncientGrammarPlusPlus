@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "../include/json.h"
 #include "../include/utils.h"
 #include "../include/utf8proc.h"
 
@@ -23,52 +24,6 @@ namespace ancientgrammar {
             free(pOutString);
 
             return retString;
-        }
-
-        bool isVowel(const std::string character) {
-            return std::string("αειορυωη").find(basicChar(character)) != std::string::npos;
-        }
-
-        std::string removeAccents(const std::string &in, const bool oneCharOnly) {
-            std::string decomposedString = calculateUnicodeNormalization(in, "NFD");
-            auto pDecomposedString = (const utf8proc_uint8_t*) decomposedString.c_str();
-
-            size_t offset = 0;
-            std::string rebuiltString;
-            while (true) {
-                utf8proc_int32_t codepoint;
-                utf8proc_iterate(pDecomposedString + offset, -1, &codepoint);
-
-                //Null, end of string TODO better way (get length of whole string)
-                if (codepoint == 0) {
-                    break;
-                }
-
-                utf8proc_uint8_t character[4];
-                auto charSize = (size_t) utf8proc_encode_char(codepoint, character);
-
-                offset += charSize;
-
-                if ((utf8proc_category(codepoint) == UTF8PROC_CATEGORY_MN) && ((codepoint != 0x0345) || oneCharOnly)) {
-                    continue;
-                }
-
-                rebuiltString.append((const char*) character, charSize);
-            }
-
-            if (!oneCharOnly) {
-                return calculateUnicodeNormalization(rebuiltString, "NFC");
-            } else {
-                return rebuiltString;
-            }
-        }
-
-        bool isEqual(const std::string &s1, const std::string &s2) {
-            return removeAccents(s1) == removeAccents(s2);
-        }
-
-        std::string basicChar(std::string in) {
-            return removeAccents(in, true);
         }
 
         CharacterVector utf8CharacterVector(const std::string &in) {
@@ -128,6 +83,92 @@ namespace ancientgrammar {
 
         unsigned long long int utf8Length(const std::string &in) {
             return utf8CharacterVector(in).size();
+        }
+
+        bool isVowel(const std::string character) {
+            return std::string("αειορυωη").find(basicChar(character)) != std::string::npos;
+        }
+
+        std::string removeAccents(const std::string &in, const bool oneCharOnly) {
+            std::string decomposedString = calculateUnicodeNormalization(in, "NFD");
+            auto pDecomposedString = (const utf8proc_uint8_t*) decomposedString.c_str();
+
+            size_t offset = 0;
+            std::string rebuiltString;
+            while (true) {
+                utf8proc_int32_t codepoint;
+                utf8proc_iterate(pDecomposedString + offset, -1, &codepoint);
+
+                //Null, end of string TODO better way (get length of whole string)
+                if (codepoint == 0) {
+                    break;
+                }
+
+                utf8proc_uint8_t character[4];
+                auto charSize = (size_t) utf8proc_encode_char(codepoint, character);
+
+                offset += charSize;
+
+                if ((utf8proc_category(codepoint) == UTF8PROC_CATEGORY_MN) && ((codepoint != 0x0345) || oneCharOnly)) {
+                    continue;
+                }
+
+                rebuiltString.append((const char*) character, charSize);
+            }
+
+            if (!oneCharOnly) {
+                return calculateUnicodeNormalization(rebuiltString, "NFC");
+            } else {
+                return rebuiltString;
+            }
+        }
+
+        bool isEqual(const std::string &s1, const std::string &s2) {
+            return removeAccents(s1) == removeAccents(s2);
+        }
+
+        std::string basicChar(const std::string &in) {
+            return removeAccents(in, true);
+        }
+
+        std::string calculateContraction(const std::string &stem, const std::string &ending, ContractType contractType,
+                                         bool spuriousEi) {
+            CharacterVector stemCharacterVector = utf8CharacterVector(stem);
+            unsigned long long int stemLength = stemCharacterVector.size();
+
+            CharacterVector endingCharacterVector = utf8CharacterVector(ending);
+
+            std::string noAccentEnding = removeAccents(ending);
+
+            if (contractType == ContractType::ALPHA) {
+                if (isEqual(characterVectorSubstr(endingCharacterVector, 0, 2), "ει")) {
+                    if (spuriousEi) {
+                        return characterVectorSubstr(stemCharacterVector, 0, stemLength-1) + ending;
+                    } else {  // I have no known examples of this TODO
+                        return characterVectorSubstr(stemCharacterVector, 0, stemLength-1) + "ᾳ" +
+                                characterVectorSubstr(endingCharacterVector, 2);
+                    }
+                }
+
+
+                for (const auto &iterator : detail::kContractionTable["ALPHA"].items()) {
+                    if (noAccentEnding.compare(0, iterator.key().size(), iterator.key()) == 0) {
+                        return characterVectorSubstr(stemCharacterVector, 0, stemLength-1) +
+                                iterator.value().get<std::string>() +
+                                characterVectorSubstr(endingCharacterVector, utf8Length(iterator.key())-1);
+                    }
+                }
+            } else if (contractType == ContractType::EPSILON) {
+                for (const auto &iterator : detail::kContractionTable["EPSILON"].items()) {
+                    if (noAccentEnding.compare(0, iterator.key().size(), iterator.key()) == 0) {
+                        return characterVectorSubstr(stemCharacterVector, 0, stemLength-1) +
+                                iterator.value().get<std::string>() +
+                                characterVectorSubstr(endingCharacterVector, utf8Length(iterator.key())-1);
+                    }
+                }
+            }
+
+            return stem + ending;
         }
     }
 }

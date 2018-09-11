@@ -27,6 +27,8 @@ namespace ancientgrammar {
             const std::string mPreposition;
 
             const bool mUncommonEpsilonAugment;
+
+            std::string getStem(Tense tense, Mood mood, Voice voice) const;
         public:
             explicit RegularVerb(const std::string &present = "", const std::string &future = "",
                         const std::string &aorist = "", const std::string &aoristPassive = "",
@@ -35,12 +37,12 @@ namespace ancientgrammar {
 
             ~RegularVerb();
 
-            //virtual std::string getFiniteForm(Tense tense, Mood mood, Voice voice, int person, bool isPlural,
-            //                                  bool autocontract) override;
+            virtual std::string getFiniteForm(Tense tense, Mood mood, Voice voice, int person, bool isPlural,
+                                              bool autocontract=false) const override;
 
-            //virtual std::string getImperative(Tense aspect, Voice voice, bool isPlural, bool autocontract) override;
+            virtual std::string getImperative(Tense aspect, Voice voice, bool isPlural, bool autocontract=false) const override;
 
-            //virtual std::string getInfinitive(Tense tense, Voice voice, bool autocontract) override;
+            virtual std::string getInfinitive(Tense tense, Voice voice, bool autocontract=false) const override;
         };
     }
 }

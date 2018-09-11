@@ -24,6 +24,8 @@ namespace ancientgrammar {
             IMPERFECT,
             AORIST
         };
+        // Code for mapping between the enum values and their name
+        const std::string tenseNames[4] = {"FUTURE", "PRESENT", "IMPERFECT", "AORIST"};
 
         // Defines an enum for verb mood
         enum class Mood {
@@ -33,6 +35,8 @@ namespace ancientgrammar {
             IMPERATIVE,
             INFINITIVE
         };
+        // Code for mapping between the enum values and their name
+        const std::string moodNames[5] = {"INDICATIVE", "SUBJUNCTIVE", "OPTATIVE", "IMPERATIVE", "INFINITIVE"};
 
         // Defines an enum for verb voice
         enum class Voice {
@@ -40,6 +44,16 @@ namespace ancientgrammar {
             MIDDLE,
             PASSIVE
         };
+        // Code for mapping between the enum values and their name
+        const std::string voiceNames[3] = {"ACTIVE", "MIDDLE", "PASSIVE"};
+
+        // Defines an enum for Aorist Type (Weak/1st or Strong/2nd type aorists)
+        enum class AoristType {
+            WEAK,
+            STRONG
+        };
+        // Code for mapping between the enum values and their name
+        const std::string aoristTypeNames[2] = {"WEAK", "STRONG"};
 
         typedef std::map<Tense, std::vector<Voice>> AllowedFormsMap;
 
@@ -53,12 +67,6 @@ namespace ancientgrammar {
                 {Tense::IMPERFECT, kAllVoices}
         };
 
-        // Defines an enum for Aorist Type (Weak/1st or Strong/2nd type aorists)
-        enum class AoristType {
-            WEAK,
-            STRONG
-        };
-
         // Base class for verbs.
         class Verb {
         protected:
@@ -70,17 +78,7 @@ namespace ancientgrammar {
             // Defines which forms are allowed with this specific verb
             AllowedFormsMap mAllowedForms;
 
-        public:
-            // TODO undo commenting out of virtuals
-            explicit Verb(const AllowedFormsMap &allowedForms=kAllFormsAllowed);
-            ~Verb();
-
             bool canGetForm(Tense tense, Voice voice) const;
-
-            //virtual std::string getFiniteForm(Tense tense, Mood mood, Voice voice, int person, bool isPlural, bool autocontract) const = 0;
-            //virtual std::string getImperative(Tense aspect, Voice voice, bool isPlural, bool autocontract) const = 0;
-            //virtual std::string getInfinitive(Tense tense, Voice voice, bool autocontract) const = 0;
-            //virtual Adjective getParticiple(Tense tense, Voice voice) const = 0; TODO Make adjective a thing
 
             // Calculates and applies the correct augment for a stem and returns the new stem.
             // Uncommon epsilon augment refers to the few (but not unique) verbs which,
@@ -89,11 +87,23 @@ namespace ancientgrammar {
             // Preposition is an optional argument to tell where in the string to apply the augment - if this is set,
             // BOTH stem and preposition should contain the preposition.
             static std::string calculateAugment(const std::string &stem, bool uncommonEpsilon,
-                                                const std::string *preposition);
+                                                const std::string &preposition);
 
             // Chooses and applies the correct breathing to use based on stem, augment, length of augment, and
             static std::string calculateBreathing(std::string stem, std::string augment, unsigned long long int length,
                                                   bool hasPreposition);
+        public:
+            // TODO undo commenting out of virtuals
+            explicit Verb(const AllowedFormsMap &allowedForms=kAllFormsAllowed);
+            ~Verb();
+
+            virtual std::string getFiniteForm(Tense tense, Mood mood, Voice voice, int person, bool isPlural,
+                    bool autocontract=false) const = 0;
+            virtual std::string getImperative(Tense aspect, Voice voice, bool isPlural,
+                    bool autocontract=false) const = 0;
+            virtual std::string getInfinitive(Tense tense, Voice voice,
+                    bool autocontract=false) const = 0;
+            //virtual Adjective getParticiple(Tense tense, Voice voice) const = 0; TODO Make adjective a thing
         };
 
         // A namespace for a variety of helper functions not meant to really be used

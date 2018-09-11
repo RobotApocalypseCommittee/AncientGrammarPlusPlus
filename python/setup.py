@@ -14,7 +14,7 @@ macros = [("BOOST_ALL_NO_LIB", None)]
 # Dynamically linked versions do not start with lib
 # Need argparse for 32- vs 64-bit as well as debugging or not and other flags. Currently selects the python version TODO
 # Also shared vs static (in this case, you need the  macro) needed (dll)
-WINDOWS_PREFERRED_LIB_REGEX = re.compile(r"(lib)?boost_python{}{}-[^-]+-(mt-)?(s?g?y?d?p?-)?(x|a|i|s|m|p){}-[_|0-9]+\.lib".format(sys.version_info.major, sys.version_info.minor, 64 if sys.maxsize == 0x7fffffffffffffff else 32))
+WINDOWS_PREFERRED_LIB_REGEX = re.compile(r"(lib)?boost_python{}{}-[^-]+-(mt-)?(s?g?y?d?p?-)?([xaismp]){}-[_|0-9]+\.lib".format(sys.version_info.major, sys.version_info.minor, 64 if sys.maxsize == 0x7fffffffffffffff else 32))
 
 if platform.system() == "Darwin":
     library_name = f"boost_python{sys.version_info.major}{sys.version_info.minor}"
@@ -65,6 +65,7 @@ elif platform.system() == "Linux":
 setup(name="AncientGrammar",
       ext_modules=[
           Extension("AncientGrammar",
-                    ["../src/verb.cpp", "../src/utils.cpp", "wrapper.cpp", "../src/utf8proc/utf8proc.c"],
+                    ["../src/verbs/regularverb.cpp", "../src/utils.cpp", "wrapper.cpp", "../src/utf8proc/utf8proc.c",
+                     "../src/verbs/verb.cpp"],
                     libraries=[library_name], define_macros=macros)
       ])

@@ -33,30 +33,30 @@ namespace ancientgrammar {
         Verb::~Verb() = default;
 
         std::string
-        Verb::calculateAugment(const std::string &stem, const bool uncommonEpsilon, const std::string *preposition) {
+        Verb::calculateAugment(const std::string &stem, const bool uncommonEpsilon, const std::string &preposition) {
             std::string stemCopy = utils::calculateUnicodeNormalization(stem, "NFC");
             std::string noAccentStemCopy = utils::removeAccents(stemCopy);
 
-            bool hasPreposition = preposition != nullptr;
+            bool hasPreposition = !preposition.empty();
             std::string toPrepend;
             if (hasPreposition) {
-                utils::CharacterVector prepositionCharacterVector = utils::utf8CharacterVector(*preposition);
+                utils::CharacterVector prepositionCharacterVector = utils::utf8CharacterVector(preposition);
                 unsigned long long int prepositionLength = prepositionCharacterVector.size();
-                if (!(utils::isEqual(*preposition, "προ") || utils::isEqual(*preposition, "περι")) &&
+                if (!(utils::isEqual(preposition, "προ") || utils::isEqual(preposition, "περι")) &&
                         utils::isVowel(utils::characterVectorSubstr(prepositionCharacterVector, prepositionLength-1))) {
 
                     toPrepend = utils::characterVectorSubstr(prepositionCharacterVector, 0, prepositionLength-1);
                 } else {
-                    toPrepend = *preposition;
+                    toPrepend = preposition;
                 }
-                stemCopy = utils::utf8Substr(stemCopy, utils::utf8Length(*preposition));
+                stemCopy = utils::utf8Substr(stemCopy, utils::utf8Length(preposition));
             }
 
             if (!utils::isVowel(utils::utf8Substr(stemCopy, 0, 1))) {
                 if (hasPreposition) {
                     return toPrepend + "ε" + stemCopy;
                 } else {
-                    return "ἐ" + stemCopy;
+                    return utils::calculateUnicodeNormalization("ἐ", "NFC") + stemCopy;
                 }
             }
 

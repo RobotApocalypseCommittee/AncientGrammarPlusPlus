@@ -54,11 +54,13 @@ int main() {
     }*/
 
     std::string prep("παρα");
-    std::cout << ancientgrammar::verbs::Verb::calculateAugment("παρασκευάζω", false, &prep) << std::endl;
 
     std::cout << ancientgrammar::utils::removeAccents("ᾤκεον", false) << std::endl;
 
     ancientgrammar::verbs::RegularVerb bang("λυω", "λυσω", "λυσα", "λυθην");
+
+    std::cout << bang.getFiniteForm(ancientgrammar::verbs::Tense::AORIST, ancientgrammar::verbs::Mood::OPTATIVE,
+            ancientgrammar::verbs::Voice::PASSIVE, 2, true) << std::endl;
     
     //std::cout << ancientgrammar::verbs::detail::kVerbTable << std::endl;
 
