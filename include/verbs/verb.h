@@ -78,6 +78,11 @@ namespace ancientgrammar {
             // Defines which forms are allowed with this specific verb
             AllowedFormsMap mAllowedForms;
 
+            // Declares some common variables that are constant and need to be set from all base classes
+            // As subclasses cannot directly initialise base const members
+            const std::string mPreposition;
+            const bool mUncommonEpsilonAugment;
+
             bool canGetForm(Tense tense, Voice voice) const;
 
             // Calculates and applies the correct augment for a stem and returns the new stem.
@@ -92,11 +97,11 @@ namespace ancientgrammar {
             // Chooses and applies the correct breathing to use based on stem, augment, length of augment, and
             static std::string calculateBreathing(std::string stem, std::string augment, unsigned long long int length,
                                                   bool hasPreposition);
-        public:
-            // TODO undo commenting out of virtuals
-            explicit Verb(const AllowedFormsMap &allowedForms=kAllFormsAllowed);
-            ~Verb();
 
+            // TODO undo commenting out of virtuals
+            explicit Verb(const std::string &preposition = "", bool uncommonEpsilonAugment = false);
+            ~Verb();
+        public:
             virtual std::string getFiniteForm(Tense tense, Mood mood, Voice voice, int person, bool isPlural,
                     bool autocontract=true) const = 0;
             virtual std::string getImperative(Tense aspect, Voice voice, bool isPlural,
@@ -105,6 +110,14 @@ namespace ancientgrammar {
                     bool autocontract=true) const = 0;
             //virtual Adjective getParticiple(Tense tense, Voice voice) const = 0; TODO Make adjective a thing
         };
+
+        /* todo after irreg implemented
+        // Function to get the correct verb type
+        Verb& getVerb(const std::string &present = "", const std::string &future = "",
+                     const std::string &aorist = "", const std::string &aoristPassive = "",
+                     const std::string &preposition = "", bool uncommonEpsilonAugment = false,
+                     const AllowedFormsMap &allowedForms = kAllFormsAllowed);
+        */
 
         // A namespace for a variety of helper functions not meant to really be used
         namespace detail {

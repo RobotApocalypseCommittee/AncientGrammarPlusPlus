@@ -14,7 +14,7 @@
 
 namespace ancientgrammar {
     namespace verbs {
-        class RegularVerb : public Verb {
+        class RegularVerb : virtual public Verb {
         protected:
             std::string mPresent;
             std::string mFuture;
@@ -23,10 +23,6 @@ namespace ancientgrammar {
 
             AoristType mAoristType;
             utils::ContractType mContract;
-
-            const std::string mPreposition;
-
-            const bool mUncommonEpsilonAugment;
 
             std::string getStem(Tense tense, Mood mood, Voice voice) const;
         public:

@@ -11,6 +11,7 @@
 #include "../include/utils.h"
 #include "../include/utf8proc.h"
 #include "../include/json.h"
+#include "../include/verbs/deponentverb.h"
 
 #include <iostream>
 #include <cstring>
@@ -57,10 +58,10 @@ int main() {
 
     std::cout << ancientgrammar::utils::removeAccents("ᾤκεον", false) << std::endl;
 
-    ancientgrammar::verbs::RegularVerb bang("τιμαω");
+    ancientgrammar::verbs::DeponentVerb bang("αἰσθανομαι");
 
-    std::cout << bang.getFiniteForm(ancientgrammar::verbs::Tense::PRESENT, ancientgrammar::verbs::Mood::OPTATIVE,
-            ancientgrammar::verbs::Voice::ACTIVE, 2, false) << std::endl;
+    std::cout << bang.getFiniteForm(ancientgrammar::verbs::Tense::PRESENT, ancientgrammar::verbs::Mood::INDICATIVE,
+            ancientgrammar::verbs::Voice::MIDDLE, 3, false) << std::endl;
     
     //std::cout << ancientgrammar::verbs::detail::kVerbTable << std::endl;
 

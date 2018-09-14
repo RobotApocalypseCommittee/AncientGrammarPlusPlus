@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <iostream>
 
 #include "../../include/verbs/verb.h"
 #include "../../include/utils.h"
@@ -28,7 +29,9 @@ namespace ancientgrammar {
                 {"ω",  "ω"}
         };
 
-        Verb::Verb(const AllowedFormsMap &allowedForms) : mAllowedForms(allowedForms) {};
+        Verb::Verb(const std::string &preposition, bool uncommonEpsilonAugment)
+        : mPreposition(preposition),
+        mUncommonEpsilonAugment(uncommonEpsilonAugment) {};
 
         Verb::~Verb() = default;
 

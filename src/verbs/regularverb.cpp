@@ -17,8 +17,9 @@ namespace ancientgrammar {
                                  const std::string &aoristPassive, const std::string &preposition,
                                  const bool uncommonEpsilonAugment,
                                  const AllowedFormsMap &allowedForms)
-                : Verb(allowedForms), mPreposition(preposition),
-                  mUncommonEpsilonAugment(uncommonEpsilonAugment) {
+                : Verb(preposition, uncommonEpsilonAugment) {
+
+            mAllowedForms = allowedForms;
 
             utils::CharacterVector presentCharacterVector = utils::utf8CharacterVector(present);
             unsigned long long int presentLength = presentCharacterVector.size();

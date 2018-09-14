@@ -3,7 +3,7 @@ project(AncientGrammar)
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(SOURCE_FILES )
+set(SOURCE_FILES src/verbs/deponentverb.cpp include/verbs/deponentverb.h)
 list(APPEND SOURCE_FILES
         src/verbs/verb.cpp
         src/verbs/regularverb.cpp
@@ -48,20 +48,19 @@ if(IOS OR MACOS)
 
         set_target_properties(AncientGrammar PROPERTIES
                 XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer"
-                XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"
-                XCODE_ATTRIBUTE_DEVELOPMENT_TEAM ${DEVELOPMENT_TEAM_ID})
+                XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2")
     else()
         set(CMAKE_OSX_SYSROOT macosx)
 
         set_target_properties(AncientGrammar PROPERTIES
-                XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Mac Developer"
-                XCODE_ATTRIBUTE_DEVELOPMENT_TEAM ${DEVELOPMENT_TEAM_ID})
+                XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Mac Developer")
     endif()
 
     set_target_properties(AncientGrammar PROPERTIES
             FRAMEWORK TRUE
             MACOSX_FRAMEWORK_IDENTIFIER com.mrattoattoatto.AncientGrammarLib
-            PUBLIC_HEADER "${PUBLIC_HEADER_FILES}")
+            PUBLIC_HEADER "${PUBLIC_HEADER_FILES}"
+            XCODE_ATTRIBUTE_DEVELOPMENT_TEAM ${DEVELOPMENT_TEAM_ID})
 
     # Chooses the correct arch
     set(CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD_64_BIT)")
