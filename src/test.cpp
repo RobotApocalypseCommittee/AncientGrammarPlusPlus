@@ -15,6 +15,13 @@
 
 #include <iostream>
 #include <cstring>
+#include <chrono>
+
+using Clock = std::chrono::steady_clock;
+using std::chrono::time_point;
+using std::chrono::duration_cast;
+using std::chrono::nanoseconds;
+using namespace std::literals::chrono_literals;
 
 int main() {
 #ifdef _WIN32
@@ -59,6 +66,15 @@ int main() {
     std::cout << ancientgrammar::utils::removeAccents("ᾤκεον", false) << std::endl;
 
     ancientgrammar::verbs::DeponentVerb bang("αἰσθανομαι");
+
+    time_point<Clock> start = Clock::now();
+    bang.getFiniteForm(ancientgrammar::verbs::Tense::PRESENT, ancientgrammar::verbs::Mood::INDICATIVE,
+                       ancientgrammar::verbs::Voice::MIDDLE, 3, false);
+    time_point<Clock> end = Clock::now();
+
+    nanoseconds diff = duration_cast<nanoseconds>(end-start);
+
+    std::cout << diff.count() << " ns" << std::endl;
 
     std::cout << bang.getFiniteForm(ancientgrammar::verbs::Tense::PRESENT, ancientgrammar::verbs::Mood::INDICATIVE,
             ancientgrammar::verbs::Voice::MIDDLE, 3, false) << std::endl;
